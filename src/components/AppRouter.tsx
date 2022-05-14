@@ -1,43 +1,47 @@
 import React from 'react'
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
-import { privateRoutes, publicRoutes, RouteNames } from '../routes'
-import Login from '../pages/Login'
-import Event from '../pages/Event'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { privateRoutes, publicRoutes } from '../routes'
 
 const AppRouter = () => {
     const auth = false
     return (
         <Routes>
             {auth
-                ? privateRoutes.map((route) => {
-                      const Element = route.element
-                      return (
+                ? privateRoutes
+                      .map((route) => {
+                          const Element = route.element
+                          return (
+                              <Route
+                                  path={route.path}
+                                  element={<Element />}
+                                  key={route.path}
+                              />
+                          )
+                      })
+                      .concat(
                           <Route
-                              path={route.path}
-                              element={<Element />}
-                              key={route.path}
+                              path='*'
+                              element={<Navigate replace to='/' />}
                           />
                       )
-                  })
-                : publicRoutes.map((route) => {
-                      const Element = route.element
-                      return (
+                : publicRoutes
+                      .map((route) => {
+                          const Element = route.element
+                          return (
+                              <Route
+                                  path={route.path}
+                                  element={<Element />}
+                                  key={route.path}
+                              />
+                          )
+                      })
+                      .concat(
                           <Route
-                              path={route.path}
-                              element={<Element />}
-                              key={route.path}
+                              path='*'
+                              element={<Navigate replace to='/login' />}
                           />
-                      )
-                  })}
+                      )}
         </Routes>
-    )
-}
-
-function Layout() {
-    return (
-        <main>
-            <Outlet />
-        </main>
     )
 }
 
