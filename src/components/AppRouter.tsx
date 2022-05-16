@@ -1,46 +1,47 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { privateRoutes, publicRoutes } from '../routes'
+import { privateRoutes, publicRoutes, RouteNames } from '../routes'
+import { useTypedSelector } from '../hooks/useTypedSelector'
 
 const AppRouter = () => {
-    const auth = false
+    const { isAuth } = useTypedSelector((state) => state.auth)
     return (
         <Routes>
-            {auth
-                ? privateRoutes
-                      .map((route) => {
-                          const Element = route.element
-                          return (
-                              <Route
-                                  path={route.path}
-                                  element={<Element />}
-                                  key={route.path}
-                              />
-                          )
-                      })
-                      .concat(
-                          <Route
-                              path='*'
-                              element={<Navigate replace to='/' />}
-                          />
-                      )
-                : publicRoutes
-                      .map((route) => {
-                          const Element = route.element
-                          return (
-                              <Route
-                                  path={route.path}
-                                  element={<Element />}
-                                  key={route.path}
-                              />
-                          )
-                      })
-                      .concat(
-                          <Route
-                              path='*'
-                              element={<Navigate replace to='/login' />}
-                          />
-                      )}
+            {isAuth ? (
+                <>
+                    {privateRoutes.map(({ path, element }) => {
+                        const Element = element
+                        return (
+                            <Route
+                                path={path}
+                                element={<Element />}
+                                key={path}
+                            />
+                        )
+                    })}
+                    <Route
+                        path='*'
+                        element={<Navigate replace to={RouteNames.EVENT} />}
+                    />
+                </>
+            ) : (
+                <>
+                    {publicRoutes.map(({ path, element }) => {
+                        const Element = element
+                        return (
+                            <Route
+                                path={path}
+                                element={<Element />}
+                                key={path}
+                            />
+                        )
+                    })}
+                    <Route
+                        path='*'
+                        element={<Navigate replace to={RouteNames.LOGIN} />}
+                    />
+                </>
+            )}
         </Routes>
     )
 }
